@@ -1,8 +1,6 @@
 /* 設定通用樣式 */
 body {
-    /* **** 這裡已修改：將字體設定為 Zen Old Mincho，並以 Noto Sans TC 作為備用字體 **** */
-    font-family: 'Zen Old Mincho', 'Noto Sans TC', serif; 
-    
+    font-family: 'Noto Sans TC', sans-serif;
     margin: 0;
     padding: 0;
     color: #E0FFFF; /* 淺青色/冰藍色文字 */
