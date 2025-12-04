@@ -1,7 +1,6 @@
 /* 設定通用樣式 */
 body {
-    /* **** 這裡就是我為您修改的地方 **** */
-    /* 將字體設定為 Zen Old Mincho，並以 Noto Sans TC 作為備用字體 */
+    /* **** 這裡已修改：將字體設定為 Zen Old Mincho，並以 Noto Sans TC 作為備用字體 **** */
     font-family: 'Zen Old Mincho', 'Noto Sans TC', serif; 
     
     margin: 0;
