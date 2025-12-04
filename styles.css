@@ -1,226 +1,181 @@
-import React, { useState, useEffect } from 'react';
-import { Sparkles, Star, Calendar, Clock, Heart, Send, Moon, Info } from 'lucide-react';
+body {
+    font-family: 'Noto Sans TC', sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #E0FFFF; /* 淺青色/冰藍色文字 */
+    background-color: #0d1a26; /* 深海藍/近黑色背景 */
+    min-height: 100vh;
+    overflow-x: hidden;
+}
 
-const SoulArtBooking = () => {
-  const [selectedService, setSelectedService] = useState(null);
-  const [isUrgent, setIsUrgent] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    birthDate: '', // Added for astrology needs
-    contact: '',
-    notes: ''
-  });
-  const [submitted, setSubmitted] = useState(false);
+/* 宇宙星辰背景效果 */
+.stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0.5px, transparent 1px);
+    background-size: 150px 150px;
+    opacity: 0.7;
+    animation: twinkle 60s linear infinite; /* 星星閃爍/移動動畫 */
+    z-index: -1;
+}
 
-  // Service Data
-  const services = [
-    { id: 1, name: "靈魂畫", price: 9999, desc: "連結靈魂本質的獨特畫作" },
-    { id: 2, name: "靈魂星圖", price: 26888, desc: "解讀靈魂藍圖與星際印記" },
-    { id: 3, name: "龍繪", price: 12888, desc: "連結龍族能量的守護畫作" },
-    { id: 4, name: "靈魂畫實體課程", price: 3333, desc: "線下親授，啟動繪畫靈感" },
-    { id: 5, name: "靈魂畫線上課程", price: 3333, desc: "跨越時空，隨時隨地學習" },
-    { id: 6, name: "三部曲靈魂畫", price: 26999, desc: "過去、現在、未來的靈魂旅程" },
-    { id: 7, name: "神聖藍圖&靈魂畫", price: 21888, desc: "深度解析生命藍圖與能量顯化" },
-    { id: 8, name: "團體戀人畫", price: 17999, desc: "雙生火焰與靈魂伴侶的能量交織" },
-    { id: 9, name: "異業合作", price: 0, desc: "歡迎各界靈性與藝術合作洽談", isContact: true },
-    { id: 10, name: "地脈啟動儀式 & 空間能量畫", price: 38888, originalPrice: 68888, desc: "連結大地之母與空間淨化 (早鳥優惠中)" },
-  ];
+@keyframes twinkle {
+    0% { background-position: 0 0; }
+    100% { background-position: 1500px 1500px; }
+}
 
-  // Mock Reviews
-  const reviews = [
-    { id: 1, name: "星際種子 A", content: "畫作收到的那一刻，眼淚不自覺流下來，感覺靈魂被深深理解了。" },
-    { id: 2, name: "靈性療癒師 B", content: "掛在工作室後，整個空間的能量場變得非常穩定且溫暖，非常感謝！" },
-    { id: 3, name: "尋找自我的 C", content: "老師的解讀非常精準，畫作中的能量讓我找回了失落已久的力量。" },
-  ];
+/* 主要容器 */
+.container {
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 20px;
+    z-index: 1;
+    position: relative;
+}
 
-  // Calculate Total
-  const calculateTotal = () => {
-    if (!selectedService) return 0;
-    let basePrice = selectedService.price;
-    let urgentFee = isUrgent ? 1000 : 0;
-    return basePrice + urgentFee;
-  };
+/* 玻璃擬態 (Glassmorphism) 效果基底 */
+.glass-effect, .glass-effect-sub, .glass-effect-card {
+    background: rgba(255, 255, 255, 0.08); /* 淺白透明背景 */
+    backdrop-filter: blur(8px); /* 模糊背景 */
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15); /* 透明邊框 */
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-  const handleServiceSelect = (service) => {
-    setSelectedService(service);
-    // Reset urgent if switching to a 'contact only' service
-    if (service.isContact) setIsUrgent(false);
-    // Smooth scroll to form
-    document.getElementById('booking-form').scrollIntoView({ behavior: 'smooth' });
-  };
+/* 標題與段落樣式 */
+header {
+    text-align: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, rgba(70, 130, 180, 0.5), rgba(0, 191, 255, 0.3)); /* 藍色漸層強調 */
+}
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Simulate API call
-    setTimeout(() => {
-      setSubmitted(true);
-      window.scrollTo(0, 0);
-    }, 1000);
-  };
+header h1 {
+    font-size: 2.5em;
+    margin-bottom: 5px;
+    color: #B0E0E6; /* 淺藍色 */
+}
 
-  // Generate random stars for background
-  const [stars, setStars] = useState([]);
-  useEffect(() => {
-    const newStars = Array.from({ length: 50 }).map((_, i) => ({
-      id: i,
-      left: `${Math.random() * 100}%`,
-      top: `${Math.random() * 100}%`,
-      animationDuration: `${Math.random() * 3 + 2}s`,
-      size: ${Math.random() * 3 + 1}px
-    }));
-    setStars(newStars);
-  }, []);
+header p {
+    font-size: 1.1em;
+    font-weight: 300;
+}
 
-  if (submitted) {
-    return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center p-4 relative overflow-hidden">
-        {/* Background Stars */}
-        {stars.map(star => (
-          <div
-            key={star.id}
-            className="absolute rounded-full bg-white opacity-70 animate-pulse"
-            style={{
-              left: star.left,
-              top: star.top,
-              width: star.size,
-              height: star.size,
-              animationDuration: star.animationDuration
-            }}
-          />
-        ))}
-        
-        <div className="bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-2xl max-w-md w-full text-center shadow-2xl relative z-10">
-          <div className="flex justify-center mb-6">
-            <div className="bg-cyan-500/20 p-4 rounded-full">
-              <Sparkles className="w-12 h-12 text-cyan-300" />
-            </div>
-          </div>
-          <h2 className="text-3xl font-serif text-white mb-4">預約申請已送出</h2>
-          <p className="text-cyan-100 mb-6">
-            感謝您的連結。宇宙已經接收到您的意圖，我們將盡快安排排程並與您聯繫。
-            <br/>願星光指引您的道路。
-          </p>
-          <button 
-            onClick={() => {setSubmitted(false); setSelectedService(null); setIsUrgent(false);}}
-            className="bg-gradient-to-r from-cyan-600 to-blue-600 text-white px-8 py-3 rounded-full hover:shadow-lg hover:shadow-cyan-500/50 transition-all duration-300"
-          >
-            返回首頁
-          </button>
-        </div>
-      </div>
-    );
-  }
+h2 {
+    color: #ADD8E6; /* 較亮的藍色 */
+    border-bottom: 2px solid rgba(173, 216, 230, 0.3);
+    padding-bottom: 10px;
+    margin-top: 0;
+}
 
-  return (
-    <div className="min-h-screen bg-[#0B1026] text-white font-sans selection:bg-cyan-500/30 relative overflow-x-hidden">
-      
-      {/* Dynamic Star Background */}
-      <div className="fixed inset-0 pointer-events-none">
-        <div className="absolute inset-0 bg-gradient-to-b from-[#050B14] via-[#0F1C3F] to-[#0B1026] opacity-90"></div>
-        {stars.map(star => (
-          <div
-            key={star.id}
-            className="absolute rounded-full bg-cyan-200 opacity-60 animate-pulse"
-            style={{
-              left: star.left,
-              top: star.top,
-              width: star.size,
-              height: star.size,
-              animationDuration: star.animationDuration
-            }}
-          />
-        ))}
-        {/* Nebula effects */}
-        <div className="absolute top-0 left-0 w-full h-96 bg-cyan-500/10 blur-[100px] rounded-full mix-blend-screen"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-purple-500/10 blur-[100px] rounded-full mix-blend-screen"></div>
-      </div>
+/* 服務項目網格 */
+.service-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 py-12">
-        
-        {/* Header */}
-        <header className="text-center mb-16">
-          <div className="flex justify-center items-center gap-3 mb-4">
-            <Moon className="w-6 h-6 text-cyan-300" />
-            <span className="text-cyan-300 tracking-[0.3em] uppercase text-sm">Soul Art Studio</span>
-            <Star className="w-6 h-6 text-cyan-300" />
-          </div>
-          <h1 className="text-4xl md:text-6xl font-serif font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-white to-purple-200 mb-6 drop-shadow-[0_0_15px_rgba(103,232,249,0.5)]">
-            靈魂畫作 & 能量調頻
-          </h1>
-          <p className="text-cyan-100/80 text-lg max-w-2xl mx-auto leading-relaxed">
-            透過畫筆連結無形，將您的靈魂頻率顯化於畫布之上。<br/>
-            每一筆都是來自宇宙的祝福。
-          </p>
-        </header>
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 
-        {/* Services Grid */}
-        <section className="mb-20">
-          <div className="flex items-center gap-2 mb-8 justify-center">
-            <Sparkles className="w-5 h-5 text-yellow-300" />
-            <h2 className="text-2xl font-serif text-cyan-100">服務項目 Service Menu</h2>
-            <Sparkles className="w-5 h-5 text-yellow-300" />
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((service) => (
-              <div 
-                key={service.id}
-                onClick={() => handleServiceSelect(service)}
-                className={`group cursor-pointer relative overflow-hidden rounded-xl border transition-all duration-500
-                  ${selectedService?.id === service.id 
-                    ? 'bg-cyan-900/40 border-cyan-400 shadow-[0_0_30px_rgba(34,211,238,0.2)] scale-105' 
-                    : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-cyan-500/30 hover:shadow-lg hover:-translate-y-1'
-                  }`}
-              >
-                <div className="p-6 relative z-10 h-full flex flex-col">
-                  <div className="flex justify-between items-start mb-4">
-                    <h3 className="text-xl font-medium text-white group-hover:text-cyan-300 transition-colors">
-                      {service.name}
-                    </h3>
-                    <div className="bg-white/10 p-2 rounded-full">
-                      <Star className="w-4 h-4 text-cyan-200" />
-                    </div>
-                  </div>
-                  
-                  <p className="text-gray-300 text-sm mb-6 flex-grow">{service.desc}</p>
-                  
-                  <div className="mt-auto pt-4 border-t border-white/10">
-                    {service.isContact ? (
-                       <span className="text-lg font-semibold text-cyan-300">歡迎洽詢</span>
-                    ) : (
-                      <div className="flex items-baseline gap-2">
-                        <span className="text-2xl font-semibold text-cyan-300">${service.price.toLocaleString()}</span>
-                        {service.originalPrice && (
-                          <span className="text-sm text-gray-400 line-through">${service.originalPrice.toLocaleString()}</span>
-                        )}
-                        {service.originalPrice && (
-                          <span className="ml-auto text-xs bg-red-500/80 text-white px-2 py-1 rounded-full">早鳥優惠</span>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                </div>
-                {/* Hover Glow Effect */}
-                <div className="absolute inset-0 bg-gradient-to-br from-cyan-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              </div>
-            ))}
-          </div>
-        </section>
+.glass-effect-card:hover {
+    transform: translateY(-5px); /* 懸停時輕微上浮 */
+    box-shadow: 0 8px 40px rgba(0, 191, 255, 0.3); /* 懸停時發光 */
+}
 
-        {/* Reviews Section */}
-        <section className="mb-20">
-           <div className="flex items-center gap-2 mb-8 justify-center">
-            <Heart className="w-5 h-5 text-pink-300" />
-            <h2 className="text-2xl font-serif text-cyan-100">好評回饋 Testimonials</h2>
-            <Heart className="w-5 h-5 text-pink-300" />
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {reviews.map((review) => (
-              <div key={review.id} className="bg-white/5 backdrop-blur-sm border border-white/10 p-6 rounded-xl relative">
-                 <div className="text-4xl text-cyan-500/20 font-serif absolute top-2 right-4">"</div>
-                 <p className="text-gray-200 mb-4 italic leading-relaxed">{review.content}</p>
-                 <div className="flex items-center gap-2">
-                   <div className="w-2 h-2 rounded-full bg-cyan-400"></div>
-                   <span className="text-sm text-cyan-200">{review.name}</span>
-                 </div>
-              </div>
+.card h3 {
+    color: #FFFACD; /* 淺黃色強調 */
+    margin-top: 0;
+    border-bottom: 1px solid rgba(255, 250, 205, 0.2);
+    padding-bottom: 5px;
+}
+
+.price {
+    font-size: 1.6em;
+    font-weight: 700;
+    color: #40E0D0; /* 綠松石色價格 */
+    margin: 10px 0;
+}
+
+.special-price {
+    font-size: 1.4em;
+    font-weight: 700;
+    color: #FFA07A; /* 淺橘色強調早鳥價 */
+    margin: 5px 0;
+}
+
+.desc {
+    font-size: 0.9em;
+    color: #A9A9A9;
+}
+
+/* 預約須知強調 */
+.notice p {
+    color: #F0E68C; /* 卡其色警告 */
+    padding: 5px 0;
+}
+
+/* 預約連結按鈕 */
+.booking-link {
+    text-align: center;
+    padding: 30px;
+}
+
+.button {
+    display: inline-block;
+    background-color: #00BFFF; /* 亮藍色按鈕 */
+    color: #0d1a26;
+    padding: 15px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 1.2em;
+    font-weight: 700;
+    letter-spacing: 1px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.button:hover {
+    background-color: #1E90FF; /* 深一點的藍色 */
+    transform: scale(1.05);
+}
+
+/* 好評回饋區 */
+.feedback-card {
+    text-align: center;
+    font-style: italic;
+    font-size: 1.1em;
+    margin-top: 15px;
+}
+
+.feedback-card cite {
+    display: block;
+    margin-top: 10px;
+    font-size: 0.9em;
+    color: #87CEEB;
+}
+
+/* 響應式設計調整 */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+        margin: 20px auto;
+    }
+
+    header h1 {
+        font-size: 2em;
+    }
+
+    .service-grid {
+        grid-template-columns: 1fr;
+    }
+}
